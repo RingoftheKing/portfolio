@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Welcome to my portfolio</title>
+    <meta name="description" content="Guo Yuhao's portfolio" />
+    <meta name="keywords" content="portfolio, yuhao" />
+    <meta name="author" content="Guo Yuhao" />
+
+    <!-- OGP (optional – keep/update as needed) -->
+    <meta property="og:site_name" content="Guo Yuhao's portfolio" />
+    <meta property="og:title" content="Guo Yuhao's portfolio" />
+    <meta property="og:description" content="Guo Yuhao's portfolio" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:image" content="img/ogp.png" />
+
+    <!-- Icons -->
+    <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+    <link rel="icon" href="img/favicon.ico" />
+
+    <!-- Fonts & CSS (use what you already have in the repo) -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700|Lato:300,400,700|Droid+Serif:400,700,400italic,700italic" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="css/agency.css" />
+    
+    <style>
+      /* Optional: prevent FOUC while sections load */
+      body[data-loading="true"] { opacity: 0; }
+    </style>
+  </head>
+
+  <body id="home" data-loading="true">
+    <div preloader="sections/nav.html"></div>
+    <div preloader="sections/about.html"></div>
+
+    <!-- function to map each section into actual HTML -->
+    <script>
+      (function () {
+        const preloaders = Array.from(document.querySelectorAll('[preloader]'));
+        const mapper = (pre) => {
+          const path = pre.getAttribute('preloader');
+          // this makes each preloader return a Promise
+          return fetch(path, { credentials: 'same-origin' })
+            .then(response => response.text())
+            .then((html) => {
+              pre.insertAdjacentHTML('beforeend', html);
+              pre.remove();
+            })
+            .catch(error => console.error(`Error loading ${path}:`, error));
+        };
+
+        const loadScript = (src, attrs = {}) => new Promise((resolve, reject) => {
+          // These lines only store the "script" in memory
+          const script = document.createElement('script');
+          script.src = src;
+          // attrs are key value pairs passed in as a json object {"example": "123"}, we must unpack it
+          Object.entries(attrs).forEach(([key, value]) => {
+            script.setAttribute(key, value);
+          });
+          script.onload = resolve;
+          script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+          // This is the line that actually injects <script> tags into the document
+          document.head.appendChild(script);
+        });
+
+            // loadScript("vendor/jquery-easing/jquery.easing.min.js", { defer: true }),
+            // loadScript('js/owl.carousel.min.js'),
+            // loadScript('js/agency.js'),
+        // Recall line 48 creates Promises
+        Promise.all(preloaders.map(mapper))
+          .then(() => loadScript("https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js", { crossorigin: "anonymous", defer: true }))
+          .then(() => loadScript("https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js", { crossorigin: "anonymous", defer: true, integrity: "sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" }))
+          .then(() => {
+            // Remove the loading attribute to show the body
+            document.body.removeAttribute('data-loading');
+          })
+          .catch(error => console.error('Error during preloading:', error));
+      })()
+    </script>
+  </body>
+
+  
+</html>
