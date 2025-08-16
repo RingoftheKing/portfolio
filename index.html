@@ -20,7 +20,7 @@
 
     <!-- Icons -->
     <link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
-    <link rel="icon" href="img/favicon.ico" />
+    <link rel="icon" href="https://github.com/RingoftheKing/portfolio/blob/main/Assets/img/testlogo.png" />
 
     <!-- Fonts & CSS (use what you already have in the repo) -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous" />
@@ -38,6 +38,8 @@
   <body id="home" data-loading="true">
     <div preloader="sections/nav.html"></div>
     <div preloader="sections/about.html"></div>
+    <div preloader="sections/test.html"></div>
+    <P>HELLO WORLD</P>
 
     <!-- function to map each section into actual HTML -->
     <script>
@@ -49,8 +51,7 @@
           return fetch(path, { credentials: 'same-origin' })
             .then(response => response.text())
             .then((html) => {
-              pre.insertAdjacentHTML('beforeend', html);
-              pre.remove();
+              pre.innerHTML = html;
             })
             .catch(error => console.error(`Error loading ${path}:`, error));
         };
