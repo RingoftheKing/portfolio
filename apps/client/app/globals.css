@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@tailwind utilities;
+
+@plugin "daisyui" {
+    themes: retro --default dark --prefersdark;
+}
+
+@keyframes slidein-up {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slidein-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slidein-left {
+    0% {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slidein-right {
+    0% {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slidein-top-left {
+    0% {
+        opacity: 0;
+        transform: translate(-30px, -30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes slidein-top-right {
+    0% {
+        opacity: 0;
+        transform: translate(30px, -30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes slidein-bottom-left {
+    0% {
+        opacity: 0;
+        transform: translate(-30px, 30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+@keyframes slidein-bottom-right {
+    0% {
+        opacity: 0;
+        transform: translate(30px, 30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(0, 0);
+    }
+}
+
+.slidein-up {
+    animation: slidein-up 0.6s ease-out forwards;
+}
+
+.slidein-down {
+    animation: slidein-down 0.6s ease-out forwards;
+}
+
+.slidein-left {
+    animation: slidein-left 0.6s ease-out forwards;
+}
+
+.slidein-right {
+    animation: slidein-right 0.6s ease-out forwards;
+}
+
+.slidein-top-left {
+    animation: slidein-top-left 0.6s ease-out forwards;
+}
+
+.slidein-top-right {
+    animation: slidein-top-right 0.6s ease-out forwards;
+}
+
+.slidein-bottom-left {
+    animation: slidein-bottom-left 0.6s ease-out forwards;
+}
+
+.slidein-bottom-right {
+    animation: slidein-bottom-right 0.6s ease-out forwards;
+}
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
