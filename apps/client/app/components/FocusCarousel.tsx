@@ -117,7 +117,7 @@ export default function FocusCarousel({projectsList}: {projectsList?: ProjectIte
         <div ref={scrollContainerRef} className="w-full overflow-x-auto snap-x snap-mandatory scrollbar-none">
             <div className="flex gap-10 px-10 py-16 w-max items-center relative">
             {/*Invisible Spacer for front of carousel*/}
-            <div className="snap-center flex-shrink-0 w-[10vw]"/>
+            <div className="flex-shrink-0 w-[5vw] md:w-[10vw]"/>
 
             {projects.map((item, index) => {
                 const isFocused = index === focusedIndex;
@@ -159,7 +159,7 @@ export default function FocusCarousel({projectsList}: {projectsList?: ProjectIte
             })}
 
             {/*Invisible Spacer for end of carousel*/}
-                <div className="snap-center flex-shrink-0 w-[10vw]"/>
+                <div className="flex-shrink-0 w-[5vw] md:w-[10vw]"/>
             </div>
 
 

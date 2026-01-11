@@ -61,18 +61,19 @@ export default function Home() {
 
             {/* Self Intro Segment */}
             <div className="relative m-10 flex flex-col md:flex-row gap-10">
-              <AnimateOnScroll direction="left" className="w-full md:basis-1/2 flex justify-center md:justify-start">
-                  <div className="relative h-48 w-48 md:h-full md:w-full">
+              <AnimateOnScroll direction="left" className="w-full md:basis-1/2 flex justify-center">
+                  <div className="w-full max-w-sm mx-auto md:mx-0">
                       <Image
-                          src="/Selfie.jpg"
+                          src="/me.jpg"
                           alt="Selfie"
-                          fill
-                          className="rounded-xl shadow-lg object-cover"
+                          width={400}
+                          height={600}
+                          className="rounded-xl shadow-lg object-contain"
                       />
                   </div>
               </AnimateOnScroll>
 
-              <AnimateOnScroll direction="right" className="w-full md:basis-1/2 text-center md:text-left">
+              <AnimateOnScroll direction="left" className="w-full md:basis-1/2 text-center md:text-left">
                   <h1 className="text-3xl md:text-2xl py-7 px-10 opacity-90">
                       About Me:
                   </h1>
