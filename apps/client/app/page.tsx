@@ -30,7 +30,7 @@ export default function Home() {
                         </p>
                     </AnimateOnScroll>
                     <div className="flex flex-col md:flex-row justify-around items-center m-8">
-                        <a href="/jss.png" download className="btn btn-lg m-2 md:m-5">
+                        <a href="/Resume.pdf" download className="btn btn-lg m-2 md:m-5">
                             Resume
                             <svg className="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path
@@ -78,7 +78,7 @@ export default function Home() {
                       About Me:
                   </h1>
                   <p className="px-10 text-2xl opacity-90 md:text-xl">
-                      Hi, I'm a current undergraduate student at the National University of Singapore,
+                      Hi, I am a current undergraduate student at the National University of Singapore,
                       pursuing a degree in <b>Computer Science</b>.
                       <br/><br/>
                       My Specialisations include

@@ -1,0 +1,4 @@
+# Do not commit real certificates or private keys
+*.pem
+*.key
+!README.md

@@ -1,0 +1,41 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+// in code we plan to let the int represent privilege levels 
+// for example non-admin role is user.VISITOR = 0 and user.ADMIN = 1, 
+// where 0 has view only, 1 would have access to edit etc.
+model AdminPageUser {
+  id    Int     @id @default(autoincrement())
+  username  String  @unique
+  password  String
+  role      Int 
+}
+
+model Project {
+  id    Int     @id @default(autoincrement())
+  name  String
+  desc  String
+  featured Boolean @default(false)
+  skills  Skill[]
+}
+
+model Skill {
+  id        Int     @id @default(autoincrement())
+  name      String
+  projectId Int
+  project   Project    @relation(fields: [projectId], references: [id])
+}
+
