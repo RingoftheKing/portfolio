@@ -17,25 +17,26 @@ datasource db {
 // in code we plan to let the int represent privilege levels 
 // for example non-admin role is user.VISITOR = 0 and user.ADMIN = 1, 
 // where 0 has view only, 1 would have access to edit etc.
-model AdminPageUser {
+model admin_page_user {
   id    Int     @id @default(autoincrement())
   username  String  @unique
   password  String
   role      Int 
 }
 
-model Project {
+model project {
   id    Int     @id @default(autoincrement())
   name  String
   desc  String
+  img   String
   featured Boolean @default(false)
-  skills  Skill[]
+  skills  skill[]
 }
 
-model Skill {
+model skill {
   id        Int     @id @default(autoincrement())
   name      String
   projectId Int
-  project   Project    @relation(fields: [projectId], references: [id])
+  project   project    @relation(fields: [projectId], references: [id])
 }
 

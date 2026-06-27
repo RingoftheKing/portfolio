@@ -1,9 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import TitleCarousel from "@/app/components/FocusCarousel";
+import ProjectsCarousel from "@/app/components/FocusCarousel";
 import AnimateOnScroll from "@/app/components/AnimateOnScroll";
 
-export default function Home() {
+async function fetchProjects() {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`);
+    const data = await response.json();
+    return data;
+}
+
+export default async function Home() {
+    const projects = await fetchProjects();
     return (
         <main>
             {/* Hero Intro */}
@@ -53,7 +60,7 @@ export default function Home() {
                         </Link>
                     </div>
                     <AnimateOnScroll direction="up" threshold={0.2} delay={400}>
-                        <p className="text-l md:text-2xl mb-2"> Available for work from: June 2026</p>
+                        <p className="text-l md:text-2xl mb-2"> Available for work from: Sep 2026</p>
                     </AnimateOnScroll>
 
                 </div>
@@ -99,7 +106,7 @@ export default function Home() {
                 <h1 className="text-6xl text-center">Projects</h1>
             </AnimateOnScroll>
             <div className="w-full flex justify-center">
-              <TitleCarousel/>
+              <ProjectsCarousel projectsList={projects}/>
             </div>
         </main>
     );

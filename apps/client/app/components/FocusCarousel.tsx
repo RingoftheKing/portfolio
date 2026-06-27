@@ -1,15 +1,21 @@
 "use client"; // server cannot useEffect to center the focused card
 import React from "react";
 import { useEffect, useRef, useState } from "react";
-import badgeList from "@/app/components/badgeList";
 import BadgeList from "@/app/components/badgeList";
+
+interface Skill {
+    id: number,
+    name: string,
+    projectId: number,
+}
 
 interface ProjectItem {
     id: number,
     title: string,
     desc: string,
     img: string, // url
-    skills?: string[], // list of skills to be turned into badges
+    skills?: Skill[],
+    featured?: boolean, // affects if this item is displayed in the carousel (always present in admin view)
 }
 
 // dummy data
@@ -19,7 +25,12 @@ const projects = [
         title: "SportsVision",
         desc: "A computer vision pipeline for sports analytics",
         img: "jump.png",
-        skills: ["Python", "OpenCV", "YOLOv8", "keypoint detection"]
+        skills: [
+            { id: 1, name: "Python", projectId: 1 },
+            { id: 2, name: "OpenCV", projectId: 1 },
+            { id: 3, name: "YOLOv8", projectId: 1 },
+            { id: 4, name: "keypoint detection", projectId: 1 }
+        ]
     },
     {
         id: 2,
@@ -52,7 +63,7 @@ const projects = [
 ];
 
 // TODO: fetch projects from server instead of using dummy data
-export default function FocusCarousel({projectsList}: {projectsList?: ProjectItem[]}) {
+export default function FocusCarousel({projectsList = []}: {projectsList?: ProjectItem[]}) {
     const [focusedIndex, setFocusedIndex] = useState(0);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -119,7 +130,8 @@ export default function FocusCarousel({projectsList}: {projectsList?: ProjectIte
             {/*Invisible Spacer for front of carousel*/}
             <div className="flex-shrink-0 w-[5vw] md:w-[10vw]"/>
 
-            {projects.map((item, index) => {
+            {/* Only show featured projects */}
+            {projectsList.filter((item) => item.featured).map((item, index) => {
                 const isFocused = index === focusedIndex;
 
                 return (
@@ -152,7 +164,7 @@ export default function FocusCarousel({projectsList}: {projectsList?: ProjectIte
 
                             {/* Section for Badges*/}
                             <div className="my-5 md:my-7"/>
-                            <BadgeList badgeList={{items: item.skills}} />
+                            <BadgeList badgeList={{items: item.skills?.map(s => s.name) || []}} />
                         </div>
                     </div>
                 );

@@ -9,7 +9,7 @@ async function main() {
   console.log('🌱 Starting seed...');
 
   // Create sample admin user (username is unique, so upsert works)
-  const adminUser = await prisma.adminPageUser.upsert({
+  const adminUser = await prisma.admin_page_user.upsert({
     where: { username: 'admin' },
     update: {},
     create: {
@@ -27,17 +27,18 @@ async function main() {
     // Create sample projects with skills
     const project1 = await prisma.project.create({
       data: {
-        name: 'Portfolio Website',
-        desc: 'A modern portfolio website built with Next.js, React, and TypeScript. Features responsive design, smooth animations, and a clean UI.',
+        name: 'Technical Interview Matchmaking Website',
+        desc: 'A Website built using RabbitMQ to facilitate technical interview practice amongst multiple devs.',
         featured: true,
         skills: {
           create: [
             { name: 'Next.js' },
             { name: 'React' },
-            { name: 'TypeScript' },
-            { name: 'Tailwind CSS' },
+            { name: 'RabbitMQ' },
+            { name: 'Event-Driven Architecture' },
           ],
         },
+        img: 'peerprep.png', // Placeholder image URL
       },
     });
     console.log('✅ Created project:', project1.name);
@@ -56,23 +57,25 @@ async function main() {
             { name: 'React' },
           ],
         },
+        img: 'seed_test/ecomm.png', // Placeholder image URL
       },
     });
     console.log('✅ Created project:', project2.name);
 
     const project3 = await prisma.project.create({
       data: {
-        name: 'Machine Learning Pipeline',
-        desc: 'End-to-end ML pipeline for image classification using TensorFlow and Python. Includes data preprocessing, model training, and deployment.',
+        name: 'Computer Vision for Sports Analytics',
+        desc: 'End-to-end ML pipeline for jump counting using openCV and Python. Includes data preprocessing, model training, and deployment.',
         featured: true,
         skills: {
           create: [
             { name: 'Python' },
-            { name: 'TensorFlow' },
+            { name: 'OpenCV' },
             { name: 'Machine Learning' },
             { name: 'Data Science' },
           ],
         },
+        img: 'jump.png', // should serve form Public TODO: check if img renders
       },
     });
     console.log('✅ Created project:', project3.name);
