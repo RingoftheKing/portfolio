@@ -14,7 +14,7 @@ router.post('/login', async (req: Request, res: Response) => {
     }
 
     // Find user in database
-    const user = await prisma.adminPageUser.findFirst({
+    const user = await prisma.admin_page_user.findFirst({
       where: { username },
     });
 

@@ -9,6 +9,9 @@ RUN npm ci
 # Now copy the full repo
 COPY . .
 
+# Get ffmpeg 
+RUN apt-get update -y && apt-get install -y ffmpeg
+
 WORKDIR /app/apps/server
 
 ENV PRISMA_CLIENT_ENGINE_TYPE=binary

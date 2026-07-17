@@ -2,10 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import ProjectsCarousel from "@/app/components/FocusCarousel";
 import AnimateOnScroll from "@/app/components/AnimateOnScroll";
+import type { Project } from "@/app/types/projects";
 
-async function fetchProjects() {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`);
+
+// this function promises to return an array of projects from the API, or an empty array if the fetch fails
+async function fetchProjects(): Promise<Project[]> {
+    const url = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/projects` : "http://localhost:3000/projects";
+    console.log("Fetching projects from URL:", url);
+    const response = await fetch(url, { cache: "no-store" });
     const data = await response.json();
+    if (!response.ok || !data) {
+        console.error("Failed to fetch projects:", data);
+        return []; // tempting to put {} as empty json, but that would break the ProjectsCarousel expecting an array of projects
+    }
     return data;
 }
 

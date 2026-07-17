@@ -27,6 +27,10 @@ export default function ProjectsPage() {
     desc: "",
     featured: false,
     skills: [] as string[],
+    thumbnail_file: null as File | null, // null is typically better at expressing the user has intentionally not selected a file, as opposed to undefined which could mean it hasn't been initialised
+    // thumbnail_path: "" as string,
+    showcase_images_files: [] as File[],
+    // showcase_images_paths: [] as string[],
   });
   const [skillInput, setSkillInput] = useState("");
   const [availableSkills, setAvailableSkills] = useState<string[]>([]);
@@ -123,31 +127,36 @@ export default function ProjectsPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const projectData = {
-      name: formData.name,
-      desc: formData.desc,
-      featured: formData.featured,
-      skills: formData.skills,
-    };
+    const projectData = new FormData();
+    projectData.append("name", formData.name);
+    projectData.append("desc", formData.desc);
+    projectData.append("featured", String(formData.featured));
+    formData.skills.forEach((skill, index) => projectData.append(`skills[${index}]`, skill)); // brace [] may not be needed
+
+    // Append files if available
+    if (formData.thumbnail_file) {
+      projectData.append("thumbnail_file", formData.thumbnail_file);
+    }
+    formData.showcase_images_files.forEach((file) => {
+      projectData.append("showcase_images_files", file);
+    });
 
     try {
       if (editingProject) {
         // Update existing project
         const response = await fetch(`${apiUrl}/projects/${editingProject.id}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(projectData),
+          body: projectData, // Use FormData directly when involving file uploads
         });
         if (response.ok) {
           await fetchProjects();
           resetForm();
         }
       } else {
-        // Create new project
+        // TODO: add photo uploads as part of project creation
         const response = await fetch(`${apiUrl}/projects`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(projectData),
+          body: projectData,
         });
         if (response.ok) {
           await fetchProjects();
@@ -183,6 +192,8 @@ export default function ProjectsPage() {
       desc: project.desc,
       featured: project.featured,
       skills: project.skills.map((s) => s.name),
+      thumbnail_file: null,
+      showcase_images_files: [],
     });
     setSkillInput("");
     setShowForm(true);
@@ -194,6 +205,8 @@ export default function ProjectsPage() {
       desc: "",
       featured: false,
       skills: [],
+      thumbnail_file: null,
+      showcase_images_files: [],
     });
     setSkillInput("");
     setShowSuggestions(false);
@@ -342,6 +355,21 @@ export default function ProjectsPage() {
                 <p className="mt-1 text-xs text-gray-500">
                   Type a skill name and press Enter to add. Existing skills will be suggested.
                 </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Add a thumbnail image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      setFormData({ ...formData, thumbnail_file: file });
+                    }
+                  }}
+                />
               </div>
               <div className="flex items-center">
                 <input

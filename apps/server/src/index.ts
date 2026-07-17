@@ -7,6 +7,7 @@ import healthRouter from './routes/health.js';
 import projectsRouter from './routes/projects.js';
 import authRouter from './routes/auth.js';
 import skillsRouter from './routes/skills.js';
+import contactRouter from './routes/contact.js'; // TODO: Implement contactRouter
 dotenv.config();
 
 const app: Express = express();
@@ -15,7 +16,7 @@ const PORT = process.env.PORT || 3000;
 // CORS configuration
 const corsOptions = {
   origin: [
-    process.env.CORS_ORIGIN_CLIENT || 'http://localhost:3000',
+    process.env.CORS_ORIGIN_CLIENT || 'http://localhost:3002',
     process.env.CORS_ORIGIN_ADMIN || 'http://localhost:3001',
   ],
   credentials: true,
@@ -32,6 +33,10 @@ app.use('/health', healthRouter);
 app.use('/projects', projectsRouter);
 app.use('/auth', authRouter);
 app.use('/skills', skillsRouter);
+app.use('/contact', contactRouter); // TODO: Implement contactRouter
+
+// static file serving
+app.use('/uploads', express.static('uploads')); // serve uploaded files
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {

@@ -1,5 +1,28 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../config/database.js';
+import { upload } from '../middleware/photoUpload.js';
+import fs from 'fs/promises';
+import { THUMBNAIL_SAVE_LOC } from '../middleware/photoUpload.js';
+import { exec, ExecException } from 'child_process';
+
+// helper function
+async function convertHeicToJpeg(path: String): Promise<void> {
+  // use ffmpeg locally to convert heic to jpeg
+  return new Promise((resolve, reject) => {
+    exec(`ffmpeg -i "${path}" "${path.replace(/\.heic$/i, '.jpg')}"`, (error) => {
+      if (error) {
+        console.error(`Error converting HEIC to JPEG: ${error.message}`);
+        reject(error);
+      } else {
+        // delete the original heic file
+        fs.unlink(path as string)
+          .then(() => resolve())
+          .catch((err: ExecException) => reject(err));
+      }
+    });
+  });
+}
+
 
 const router = Router();
 
@@ -37,19 +60,50 @@ router.get('/:id', async (req: Request, res: Response) => {
 });
 
 // POST create new project
-router.post('/', async (req: Request, res: Response) => {
+interface ProjectUploadedFiles {
+  thumbnail_file?: Express.Multer.File[];
+  showcase_files?: Express.Multer.File[];
+}
+
+router.post('/', 
+  upload.fields([
+    { name: 'thumbnail_file', maxCount: 1 },
+    { name: 'showcase_files', maxCount: 5 },  // accesible via file.fieldname 
+  ]),
+  async (req: Request, res: Response) => {
   try {
+    const conversions : Record<string, string> = {}
     const { name, desc, featured, skills } = req.body;
     
     if (!name || !desc) {
       return res.status(400).json({ error: 'Name and description are required' });
     }
 
+    // extract multer files
+    const files = req.files as ProjectUploadedFiles;
+
+    // TODO: If HEIC convert to JPEG
+    if (files.thumbnail_file && files.thumbnail_file[0].filename.toLowerCase().endsWith('.heic')) {
+      // Extra check for security: Ensure file is actually a HEIC file?
+      // pass
+      // Convert HEIC to JPEG
+      const filename = files.thumbnail_file?.[0]?.filename;
+      const fullPath = `${THUMBNAIL_SAVE_LOC}/${filename}`;
+      await convertHeicToJpeg(fullPath);
+      // indicate filename has been converted
+      conversions[filename] = filename.replace(/\.heic$/i, '.jpg');
+    }
+
+    const thumbnail = files.thumbnail_file?.[0]?.filename;
+    const showcaseImgs = files.showcase_files?.map(file => file.filename) || [];
+
     const project = await prisma.project.create({
       data: {
         name,
         desc,
-        featured: featured || false,
+        thumbnail_img: thumbnail ? (conversions[thumbnail] || thumbnail) : null,
+        showcase_imgs: files.showcase_files?.map(file => conversions[file.filename] || file.filename) || [],
+        featured: featured === 'true', // multer sends boolean values as strings
         skills: {
           create: skills?.map((skillName: string) => ({
             name: skillName,
@@ -61,8 +115,11 @@ router.post('/', async (req: Request, res: Response) => {
       },
     });
     res.status(201).json(project);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to create project' });
+  } catch (error: any) {
+    // cleanup
+    // Delete any uploaded files if project creation fails
+
+    res.status(500).json({ error: error.message });
   }
 });
 

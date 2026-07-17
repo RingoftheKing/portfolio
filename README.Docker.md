@@ -9,6 +9,7 @@ This document describes how to run the portfolio application using Docker and Do
 - (Optional) Make sure ports 3000, 3001, and 5432 are available
 
 ## Quick Start
+Open Docker if you haven't already. The Engine needs to be running
 
 1. **Copy environment file:**
    ```bash

@@ -1,5 +1,8 @@
 # Quick Start (Server)
 This part of the app (service) acts as a server and is a source of truth for both the Admin and Client Apps. 
+
+# REQUIRED: FFMPEG download
+When running docker container, get ffmpeg inside it.
 ## Local Dev
 > This MUST run first on port 3000  
 

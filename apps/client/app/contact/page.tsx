@@ -12,6 +12,8 @@ const ContactPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleCopyEmail = async () => {
     try {
@@ -29,7 +31,7 @@ const ContactPage = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,14 +40,18 @@ const ContactPage = () => {
       });
 
       if (response.ok) {
-        alert("Message sent successfully!");
+        const result = await response.json();
+        setSnackbarMessage(`Message from server: ${result.message}`);
+        setTimeout(() => setSnackbarMessage(""), 3000); // Clear message after 3 seconds
         setFormData({ name: "", email: "", message: "" });
       } else {
-        alert("Failed to send message. Please try again.");
+        setErrorMessage("Failed to send message. Please try again.");
+        setTimeout(() => setErrorMessage(""), 5000); // Clear error after 5 seconds
       }
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("An error occurred. Please try again.");
+      // console.error("Error submitting form:", error);
+      setErrorMessage("An error occurred. Please try again.");
+      setTimeout(() => setErrorMessage(""), 5000); // Clear error after 5 seconds
     } finally {
       setIsSubmitting(false);
     }
@@ -201,6 +207,18 @@ const ContactPage = () => {
             </div>
           </AnimateOnScroll>
         </div>
+        {/* Snackbar for feedback */}
+        {snackbarMessage && (
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded shadow-lg z-50">
+            {snackbarMessage}
+          </div>
+        )}
+        {/* Error message display */}
+        {errorMessage && (
+          <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-red-600 text-white px-4 py-2 rounded shadow-lg z-50">
+            {errorMessage}
+          </div>
+        )}
       </div>
     </main>
   );

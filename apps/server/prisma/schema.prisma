@@ -28,7 +28,8 @@ model project {
   id    Int     @id @default(autoincrement())
   name  String
   desc  String
-  img   String
+  thumbnail_img   String?
+  showcase_imgs   String[] 
   featured Boolean @default(false)
   skills  skill[]
 }

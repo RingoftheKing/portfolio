@@ -2,21 +2,12 @@
 import React from "react";
 import { useEffect, useRef, useState } from "react";
 import BadgeList from "@/app/components/badgeList";
+import type { Project } from "@/app/types/projects";
 
-interface Skill {
-    id: number,
-    name: string,
-    projectId: number,
-}
 
-interface ProjectItem {
-    id: number,
-    title: string,
-    desc: string,
-    img: string, // url
-    skills?: Skill[],
-    featured?: boolean, // affects if this item is displayed in the carousel (always present in admin view)
-}
+const serverResourceURL = process.env.API_URL 
+                            ? `${process.env.API_URL}/uploads` 
+                            : `http://localhost:3000/uploads`; // for local dev, use the server's uploads folder directly
 
 // dummy data
 const projects = [
@@ -63,7 +54,7 @@ const projects = [
 ];
 
 // TODO: fetch projects from server instead of using dummy data
-export default function FocusCarousel({projectsList = []}: {projectsList?: ProjectItem[]}) {
+export default function FocusCarousel({projectsList = []}: {projectsList?: Project[]}) {
     const [focusedIndex, setFocusedIndex] = useState(0);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -152,7 +143,7 @@ export default function FocusCarousel({projectsList = []}: {projectsList?: Proje
 
                         <div className="rounded-xl shadow-xl overflow-hidden bg-base-200 flex justify-center items-center">
                             <img
-                                src={item.img}
+                                src={`${serverResourceURL}/thumbnails/${item.thumbnail_img}`}
                                 alt={item.title}
                                 className="w-auto h-[75vh] object-cover"
                             />
