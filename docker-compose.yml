@@ -63,9 +63,6 @@ services:
       NEXT_PUBLIC_API_URL: /api
     expose:
       - "3000"
-    # lets test exposing a port to see if the app works
-    ports:
-      - "3000:3000"
     depends_on:
       server:
         condition: service_healthy
@@ -91,8 +88,6 @@ services:
       NEXT_PUBLIC_API_URL: /api # NEXT_PUBLIC_ is required for Next.js to expose the variable to the frontend
     expose:
       - "3001"
-    ports:
-      - "3001:3001"
     depends_on:
       server:
         condition: service_healthy

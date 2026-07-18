@@ -35,8 +35,8 @@ router.get('/', async (req: Request, res: Response) => {
       },
     });
     res.status(200).json(projects);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch projects' });
+  } catch (error: any) {
+    res.status(500).json({ error: `Failed to fetch projects due to ${error.message}` });
   }
 });
 
@@ -54,8 +54,8 @@ router.get('/:id', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Project not found' });
     }
     res.status(200).json(project);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch project' });
+  } catch (error: any) {
+    res.status(500).json({ error: `Failed to fetch project due to ${error.message}` });
   }
 });
 

@@ -38,7 +38,7 @@ export default function ProjectsPage() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const router = useRouter();
 
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api";
+  const apiUrl = "/api";
 
   const fetchProjects = useCallback(async () => {
     try {

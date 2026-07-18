@@ -9,7 +9,7 @@ RUN npm ci
 # Now copy the full repo
 COPY . .
 
-# Get ffmpeg 
+# Get ffmpeg for HEIC -> JPEG conversion
 RUN apt-get update -y && apt-get install -y ffmpeg
 
 WORKDIR /app/apps/server
