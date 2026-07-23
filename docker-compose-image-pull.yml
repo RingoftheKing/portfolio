@@ -1,0 +1,118 @@
+# For composing with prebuilt images
+services:
+  # PostgreSQL Database
+  postgres:
+    image: yuhaosakana/pf-db:latest 
+    container_name: portfolio-postgres
+    environment:
+      POSTGRES_DB: ${DB_NAME:-portfolio_db}
+      POSTGRES_USER: ${DB_USER:-portfolio_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-portfolio_password}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - portfolio-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-portfolio_user} -d ${DB_NAME:-portfolio_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # Backend API Server
+  server:
+    image: yuhaosakana/pf-svr:latest
+    container_name: portfolio-server
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: postgresql://${DB_USER:-portfolio_user}:${DB_PASSWORD:-portfolio_password}@postgres:5432/${DB_NAME:-portfolio_db}?schema=public
+      CORS_ORIGIN_CLIENT: http://localhost
+      CORS_ORIGIN_ADMIN: http://localhost
+    networks:
+      - portfolio-network
+    expose:
+      - "3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)}).on('error', () => {process.exit(1)})\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Client App
+  client:
+    image: yuhaosakana/pf-main:latest
+    container_name: portfolio-client
+    environment:
+      NODE_ENV: production
+    networks:
+      - portfolio-network
+    expose:
+      - "3001"
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)}).on('error', () => {process.exit(1)})\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Admin App
+  admin:
+    image: yuhaosakana/pf-admin:latest
+    container_name: portfolio-admin
+    environment:
+      NODE_ENV: production
+    networks:
+      - portfolio-network
+    expose:
+      - "3002"
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3002/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)}).on('error', () => {process.exit(1)})\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+  # Nginx
+  nginx:
+    image: yuhaosakana/pf-n:latest
+    container_name: portfolio-nginx
+    ports:
+      - "80:80"
+    networks:
+      - portfolio-network
+    depends_on:
+      client:
+        condition: service_healthy
+      admin:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost/ || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  portfolio-network:
+    driver: bridge
