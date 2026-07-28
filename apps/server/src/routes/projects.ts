@@ -124,7 +124,12 @@ router.post('/',
 });
 
 // PUT update project
-router.put('/:id', async (req: Request, res: Response) => {
+router.put('/:id', 
+  upload.fields([
+    { name: 'thumbnail_file', maxCount: 1 },
+    { name: 'showcase_files', maxCount: 5 }
+  ]), 
+  async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id);
     const { name, desc, featured, skills } = req.body;
@@ -134,13 +139,28 @@ router.put('/:id', async (req: Request, res: Response) => {
       where: { projectId: id },
     });
 
+    const oldThumbnail = await prisma.project.findUnique({
+      where: { id },
+      select: { thumbnail_img: true },
+    });
+
+    // delete old thumbnail if a new one is uploaded
+    const files = req.files as ProjectUploadedFiles;
+    const newThumbnail = files.thumbnail_file?.[0]?.filename;
+    if (newThumbnail && oldThumbnail?.thumbnail_img) {
+      await fs.unlink(`${THUMBNAIL_SAVE_LOC}/${oldThumbnail.thumbnail_img}`).catch(err => {
+        console.error(`Failed to delete old thumbnail: ${err.message}`);
+      });
+    }
+
     // Update project and create new skills
     const project = await prisma.project.update({
       where: { id },
       data: {
         name,
         desc,
-        featured: featured !== undefined ? featured : false,
+        featured: featured === 'true', // multer sends boolean values as strings
+        thumbnail_img: newThumbnail || oldThumbnail?.thumbnail_img || null,
         skills: {
           create: skills?.map((skillName: string) => ({
             name: skillName,

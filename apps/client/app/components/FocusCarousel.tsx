@@ -5,9 +5,7 @@ import BadgeList from "@/app/components/badgeList";
 import type { Project } from "@/app/types/projects";
 
 
-const serverResourceURL = process.env.API_URL 
-                            ? `${process.env.API_URL}/uploads` 
-                            : `http://localhost:3000/uploads`; // for local dev, use the server's uploads folder directly
+const serverResourceURL = "/api/uploads"; // for local dev, use the server's uploads folder directly
 
 // dummy data
 const projects = [
